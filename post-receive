@@ -1,0 +1,69 @@
+#!/usr/bin/env python
+
+# require python2.7
+import sys, subprocess, time, os, commands
+
+monthDict = {
+  "Jan": "1",
+  "Feb": "2",
+  "Mar": "3",
+  "Apr": "4",
+  "May": "5",
+  "Jun": "6",
+  "Jul": "7",
+  "Aug": "8",
+  "Sep": "9",
+  "Oct": "10",
+  "Nov": "11",
+  "Dec": "12"
+}
+
+# v0.0.3          some msg 3
+# v0.0.2          some msg 2
+# v0.0.1          some msg 1
+status, output = commands.getstatusoutput("git tag -l -n --sort=-v:refname")
+logs = output.split("\n")
+infoList = []
+for tagLine in logs:
+  # tag
+  tag = tagLine.split()[0]
+
+  # tag v0.0.1
+  # Tagger: flyingpig <princetotti@163.com>
+  # Date:   Sat May 30 15:07:36 2020 +0800
+  # 
+  # some msg 1
+  status, output = commands.getstatusoutput("git show " + tag)
+  tagInfo = output.split("\n")
+  # tag message
+  tagMsg = tagInfo[4]
+
+  tagTimeStr = tagInfo[2]
+  tagTimeStrList = tagTimeStr.split("   ")
+  tagFormatTimeStr = tagTimeStrList.pop()
+  tagFormatTimeStrList = tagFormatTimeStr.split(" ")
+  year = tagFormatTimeStrList[4]
+  monthName = tagFormatTimeStrList[1]
+  month = monthDict[monthName]
+  day = tagFormatTimeStrList[2]
+  timef = tagFormatTimeStrList[3]
+  # formatted time string
+  formatTimeStr = year + "-" + month + "-" + day + " " + timef
+
+  content = tag + " - " + formatTimeStr + "\n" + tagMsg
+  infoList.append(content)
+
+concat = "\n\n"
+fullContent = concat.join(infoList)
+currentPath = sys.path[0]
+changeLogPath = currentPath.replace(".git/hooks", "CHANGELOG.md")
+if not os.path.exists(changeLogPath):
+  print("create " + changeLogPath)
+
+f = open(changeLogPath, "w")
+f.write(fullContent)
+print("update " + changeLogPath)
+f.close()
+
+status, output = commands.getstatusoutput('git commit -i CHANGELOG.md -m "new version updated at ' + str(time.time()) + '"')
+print(output)
