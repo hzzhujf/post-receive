@@ -50,7 +50,7 @@ for tagLine in logs:
   # formatted time string
   formatTimeStr = year + "-" + month + "-" + day + " " + timef
 
-  content = tag + " - " + formatTimeStr + "\n" + tagMsg
+  content = "# " + tag + " - " + formatTimeStr + "\n" + tagMsg
   infoList.append(content)
 
 concat = "\n\n"
