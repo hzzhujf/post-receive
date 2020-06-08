@@ -27,8 +27,6 @@ git push origin master --tags
 
 将该文件直接放入项目的 *.git/hooks* 目录下
 
-![image-20200608214357452](/Users/videopls/Library/Application Support/typora-user-images/image-20200608214357452.png)
-
 当 git 服务端接收到请求时，会根据 git tag 生成对应的*CHANGELOG.md*文件（已有则覆盖）
 
 *CHANGELOG.md*的格式如下：
